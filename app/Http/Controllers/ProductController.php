@@ -1,99 +1,106 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller {
-    /**
-     * Display a listing of the resource.
-     */
 
-     function fetch(){
+    function main() {
+        return view('main');
+    }
+
+    function fetch() {
         return view('fetch');
-     }
+    }
 
     public function index() {
-        
         return response()->json([
-            'products' => Product::orderBy('name')->get(),
-            'token' => csrf_token()]
-        );
+            'products' => Product::orderBy('name')->get()
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create() { 
+    /*public function create() {
+        //
+    }*/
 
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request) {
-        /*$validated = $request->validate([
-            'name'  => 'required|unique:product|max:100|min:2',
+        $validator = Validator::make($request->all(), [
+            'name'  => 'required|unique:products|max:100|min:2',
             'price' => 'required|numeric|gte:0|lte:100000',
-        ]);*/
-        $object = new Product($request->all());
-        try {
-            $result = $object->save();
-        } catch(\Exception $e) {
+        ]);
+        if ($validator->passes()) {
+            $message = '';
+            $object = new Product($request->all());
+            try {
+                $result = $object->save();
+            } catch(\Exception $e) {
+                $result = false;
+                $message = $e->getMessage();
+            }
+        } else {
             $result = false;
+            $message = $validator->getMessageBag();
         }
-        return response()->json(['result' => $result]);
-    } 
+        return response()->json(['result' => $result, 'message' => $message]);
+    }
 
-    /**
-     * Display the specified resource.
-     */
     public function show($id) {
         $product = Product::find($id);
         $message = '';
         if($product === null) {
-            $message = 'Product not found';
+            $message = 'Product not found.';
         }
         return response()->json([
             'message' => $message,
-            'product' => $product
+            'products' => $product
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     /*public function edit(Product $product) {
         //
     }*/
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id) {
+        $message = '';
         $product = Product::find($id);
-        if($product != null ) {
-        $validated = $request->validate([
-            'name'  => 'required|max:100|min:2|unique:product,name,' . $product->id,
-            'price' => 'required|numeric|gte:0|lte:100000',
-        ]);
-        try {
-            $result = $product->update($request->all());
-            //$product->fill($request->all());
-            //$result = $product->save();
-            return redirect('product')->with(['message' => 'The product has been updated.']);
-        } catch(\Exception $e) {
-            return back()->withInput()->withErrors(['message' => 'The product has not been updated.']);
+        $result = false;
+        if($product != null) {
+            $validator = Validator::make($request->all(), [
+                'name'  => 'required|max:100|min:2|unique:products,name,' . $product->id,
+                'price' => 'required|numeric|gte:0|lte:100000',
+            ]);
+            if($validator->passes()) {
+                try {
+                    $result = $product->update($request->all());
+                } catch(\Exception $e) {
+                    $message = $e->getMessage();
+                }
+            } else {
+                $message = $validator->getMessageBag();
+            }
+        } else {
+            $message = 'Product not found';
         }
-
-        }
+        return response()->json(['result' => $result, 'message' => $message]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Product $product) {
-        //
+    public function destroy($id) {
+        $product = Product::find($id);
+        $message = '';
+        $result = false;
+        if($product != null) {
+            try {
+                $result = $product->delete();
+            } catch(\Exception $e) {
+                $message = $e->getMessage();
+            }
+        } else {
+            $message = 'Product not found';
+        }
+        return response()->json(['result' => $result, 'message' => $message]);
     }
 }
+
+
