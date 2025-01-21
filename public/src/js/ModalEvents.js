@@ -1,3 +1,4 @@
+
 import HttpClient from './HttpClient.js';
 import ResponseContent from './ResponseContent.js';
 
@@ -43,6 +44,15 @@ export default class ModalEvents {
         this.productError = document.getElementById('productError');
         this.productSuccess = document.getElementById('productSuccess');
 
+        this.modalRegister = document.getElementById('registerModal');
+        this.modalRegisterUserButton = document.getElementById('registerUserButton');
+        this.registerName = document.getElementById('registerName');
+        this.registerEmail = document.getElementById('registerEmail');
+        this.registerPassword = document.getElementById('registerPassword');
+        this.registerConfirmPassword = document.getElementById('registerConfirmPassword');
+
+        this.logoutButton = document.getElementById('logoutButton');
+
         this.assignEvents();
     }
 
@@ -72,7 +82,7 @@ export default class ModalEvents {
         this.modalView.addEventListener('show.bs.modal', event => {
             document.getElementById('modalViewWarning').style.display= 'none';
             this.viewCreatedAt.value = '';
-            this.viewId.value = '';
+            this.viewId.value = event.relatedTarget.dataset.id;
             this.viewName.value = event.relatedTarget.dataset.name;
             this.viewPrice.value = event.relatedTarget.dataset.price;
             this.viewUpdatedAt.value = '';
@@ -84,6 +94,15 @@ export default class ModalEvents {
                 {},
                 data => this.responseShow(data)
             );
+        });
+
+        this.modalRegister.addEventListener('show.bs.modal', event => {
+            //document.getElementById('modalCreateWarning').style.display = 'none';
+            this.fetchUrl = event.relatedTarget.dataset.url;
+            this.registerName.value = '';
+            this.registerEmail.value = '';
+            this.registerPassword.value = '';
+            this.registerConfirmPassword.value = '';
         });
 
         this.modalCreateButton.addEventListener('click', event => {
@@ -118,6 +137,29 @@ export default class ModalEvents {
                 data => this.responseEdit(data)
             );
         });
+
+        //botÃ³n, y los 4 campos, atributos de la clase
+        this.modalRegisterUserButton.addEventListener('click', event => {
+            this.httpClient.post(
+                this.fetchUrl,
+                {
+                    name: this.registerName.value,
+                    email: this.registerEmail.value,
+                    password: this.registerPassword.value,
+                    password_confirmation: this.registerConfirmPassword.value
+                },
+                data => this.responseRegister(data)
+            );
+        });
+
+        this.logoutButton.addEventListener('click', event => {
+            console.log('adios');
+        });
+    }
+
+    formattedDate(date) {
+        date = new Date(date);
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
     }
 
     responseCreate(data) {
@@ -159,13 +201,17 @@ export default class ModalEvents {
         }
     }
 
+    responseRegister(data) {
+        console.log(data);
+    }
+
     responseShow(data) {
-        const {id, name, price, created_at, updated_at} = data.products;
-        this.viewCreatedAt.value = created_at;
+        const {id, name, price, created_at, updated_at} = data.product;
+        this.viewCreatedAt.value = this.formattedDate(created_at);
         this.viewId.value = id;
         this.viewName.value = name;
         this.viewPrice.value = price;
-        this.viewUpdatedAt.value = updated_at;
+        this.viewUpdatedAt.value = this.formattedDate(updated_at);
     }
 
     init() {
