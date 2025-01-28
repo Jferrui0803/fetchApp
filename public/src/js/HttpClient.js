@@ -1,3 +1,4 @@
+
 export default class HttpClient {
 
     constructor(baseUrl = '', csrfToken = '') {
@@ -25,7 +26,10 @@ export default class HttpClient {
             options.body = JSON.stringify(parameters);
         }
         fetch(fullUrl, options)
-            .then(response => response.json())
+            .then(response => {
+                console.log(response.status);
+                return response.json();
+            })
             .then(data => {
                 console.log(data);
                 callBack(data);
@@ -49,5 +53,9 @@ export default class HttpClient {
 
     put(url, parameters = {}, callBack) {
         this.request(url, 'PUT', parameters, {}, callBack);
+    }
+
+    set csrf(csrfToken) {
+        this.csrfToken = csrfToken;
     }
 }

@@ -1,9 +1,11 @@
+
 import HttpClient from './HttpClient.js';
 export default class PageItem {
 
     constructor(parent, currentPage) {
         this.parent = parent;
         this.currentPage = currentPage;
+        this.httpClient = new HttpClient();
     }
 
     add(link, callBack) {
@@ -32,9 +34,8 @@ export default class PageItem {
         li.appendChild(tag);
         this.parent.appendChild(li);
         tag.addEventListener('click', (event) => {
-            let httpClient = new HttpClient();
             if(event.target.dataset.url != 'null') {
-                httpClient.get(event.target.dataset.url, {}, (data) => {
+                this.httpClient.get(event.target.dataset.url, {}, (data) => {
                     callBack(data);
                 });
             }

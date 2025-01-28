@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller {
@@ -14,7 +15,8 @@ class ProductController extends Controller {
 
     public function index() {
         return response()->json([
-            'products' => Product::orderBy('name')->paginate(10)
+            'products' => Product::orderBy('name')->paginate(10),
+            'user' => Auth::user()
         ]);
     }
 
@@ -30,6 +32,7 @@ class ProductController extends Controller {
             'name'  => 'required|unique:products|max:100|min:2',
             'price' => 'required|numeric|gte:0|lte:100000',
         ]);
+        // $validator = validator($request->all(), [
         if ($validator->passes()) {
             $message = '';
             //$product = new Product($request->all());
