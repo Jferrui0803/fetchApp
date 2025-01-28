@@ -185,7 +185,7 @@ export default class ModalEvents {
                 this.httpClient.post(
                     link.dataset.url,
                     {},
-                    data => this.responseCommonContent(data)
+                    data => console.log(data)   //this.responseCommonContent(data)
                 );
             });
         }
