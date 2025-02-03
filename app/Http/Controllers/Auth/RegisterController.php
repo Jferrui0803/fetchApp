@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 
@@ -83,14 +83,13 @@ class RegisterController extends Controller
 
         if ($response = $this->registered($request, $user)) {
             //return $response;
-            return response()->json(['result' => false, 'message' => 'No.....']);
+            return response()->json(['result' => false, 'message' => 'No ...']);
         }
 
-        //para la web tradicional y la web con fech
-       /* return $request->wantsJson()
+        //para la web tradicional y la web con fetch
+        /*return $request->wantsJson()
                     ? new JsonResponse([], 201)
                     : redirect($this->redirectPath());*/
-        return response()->json(['result' => true, 'message' => 'Yes.....', 'user' => $user]);
+        return response()->json(['result' => true, 'message' => 'Yes ...', 'user' => $user]);
     }
-
 }

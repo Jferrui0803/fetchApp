@@ -167,9 +167,6 @@ export default class ModalEvents {
             );
         });
 
-        /*this.logoutButton.addEventListener('click', event => {
-            console.log('adios');
-        });*/
     }
 
     formattedDate(date) {
@@ -177,18 +174,22 @@ export default class ModalEvents {
         return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
     }
 
-    responseCommonContent(data) {
-        this.responseContent.setContent(data);
+    logoutLinkListener() {
         let link = document.getElementById('logoutLink');
         if(link) {
             link.addEventListener('click', event => {
                 this.httpClient.post(
                     link.dataset.url,
                     {},
-                    data => console.log(data)   //this.responseCommonContent(data)
+                    data => this.responseLogout(data)
                 );
             });
         }
+    }
+
+    responseCommonContent(data) {
+        this.responseContent.setContent(data);
+        this.logoutLinkListener();
     }
 
     responseCreate(data) {
@@ -231,14 +232,23 @@ export default class ModalEvents {
     }
 
     responseLogin(data) {
-        data = {
-            name: 'Juan'
+        if(data.result) {
+            bootstrap.Modal.getInstance(this.modalLogin).hide();
+            this.responseContent.setUserContent(data.user);
+            this.logoutLinkListener();
         }
-        console.log('login ' + data);
-        this.responseContent.setUserContent(data);
+    }
+
+    responseLogout(data) {
+        if(data.result) {
+            this.responseContent.setUserContent(null);
+        }
     }
 
     responseRegister(data) {
+        if(data.result) {
+            bootstrap.Modal.getInstance(this.modalRegister).hide();
+        }
         console.log('register ' + data);
     }
 

@@ -26,11 +26,11 @@ export default class ResponseContent {
     setContent(result) {
         this.cleanContent(this.content);
         this.cleanContent(this.paginationContent);
-
+    
         this.currentPage = result.products.current_page;
-
+    
         this.setUserContent(result.user);
-
+    
         const buttonCreate = document.createElement('button');
         buttonCreate.textContent = 'create';
         buttonCreate.setAttribute('data-bs-toggle', 'modal');
@@ -38,14 +38,14 @@ export default class ResponseContent {
         buttonCreate.classList.add('btn', 'btn-success');
         buttonCreate.dataset.url = "/product";
         buttonCreate.dataset.method = "post";
-        content.appendChild(buttonCreate);
-
+        this.content.appendChild(buttonCreate);
+    
         result.products.links.forEach(element => {
             this.pageItem.add(element, (data) => {
                 this.setContent(data);
             });
         });
-
+    
         result.products.data.forEach(element => {
             this.responseRow.add(element);
         });
@@ -53,7 +53,7 @@ export default class ResponseContent {
 
     setUserContent(user) {
         this.cleanContent(this.userContent);
-        if(user===null) {
+        if (user === null) {
             this.setNoUserContent();
         } else {
             this.setCurrentUserContent(user);
@@ -61,16 +61,11 @@ export default class ResponseContent {
     }
 
     setCurrentUserContent(user) {
-        /*<li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                {{ Auth::user()->name }}
-            </a>
-            <div class="dropdown-menu dropdown-menu-end" >
-                <a class="dropdown-item" data-url="/logout">
-                    Logout
-                </a>
-            </div>
-        </li>*/
+        if (!user || !user.name) {
+            console.error('Invalid user object:', user);
+            return;
+        }
+    
         let listItem = document.createElement('li');
         listItem.classList.add('nav-item', 'dropdown');
         let a = document.createElement('a');
@@ -80,7 +75,7 @@ export default class ResponseContent {
         a.appendChild(textNode);
         listItem.appendChild(a);
         this.userContent.appendChild(listItem);
-
+    
         let div = document.createElement('div');
         div.classList.add('dropdown-menu', 'dropdown-menu-end');
         a = document.createElement('a');
