@@ -13,11 +13,12 @@
         <button id="fetchDeleteBt">fetch destroy</button>
     </body>
     <script>
-        let csrf_token = document.querySelector('meta[name="csrf-token"]').content
-        let url_base = document.querySelector('meta[name="url-base"]').content
-        let fetchBt = document.getElementById('fetchBt')
+        let csrf_token = document.querySelector('meta[name="csrf-token"]').content;
+        let url_base = document.querySelector('meta[name="url-base"]').content;
+        
+        let fetchBt = document.getElementById('fetchBt');
         fetchBt.addEventListener('click', (event) => {
-            fetch(url_base + '/products', {
+            fetch(url_base + '/cars', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -25,7 +26,7 @@
                     'X-CSRF-Token': csrf_token
                 },
                 body: JSON.stringify({
-                        'name': 'sequi',
+                        'name': 'pepino',
                         'price': 0.35
                     })
                 }).
@@ -34,9 +35,10 @@
                 console.log(data)
             });
         });
-        let fetchUpdateBt = document.getElementById('fetchUpdateBt')
+        
+        let fetchUpdateBt = document.getElementById('fetchUpdateBt');
         fetchUpdateBt.addEventListener('click', (event) => {
-            fetch(url_base + '/products/1', {
+            fetch(url_base + '/cars/3', {
                 method: 'PUT',
                 headers: {
                     'Accept': 'application/json',
@@ -53,15 +55,16 @@
                 console.log(data)
             });
         });
-        let fetchDeleteBt = document.getElementById('fetchDeleteBt')
+        
+        let fetchDeleteBt = document.getElementById('fetchDeleteBt');
         fetchDeleteBt.addEventListener('click', (event) => {
-            fetch(url_base + '/products/3', {
+            fetch(url_base + '/cars/3', {
                 method: 'DELETE',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                     'X-CSRF-Token': csrf_token
-                },
+                }
             }).
             then(response => response.json()).
             then(data => {

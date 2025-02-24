@@ -1,4 +1,3 @@
-
 import PageItem from './PageItem.js';
 import ResponseRow from './ResponseRow.js';
 
@@ -27,33 +26,34 @@ export default class ResponseContent {
         this.cleanContent(this.content);
         this.cleanContent(this.paginationContent);
     
-        this.currentPage = result.products.current_page;
+        this.currentPage = result.cars.current_page; 
     
         this.setUserContent(result.user);
     
+        // Coche: botón crear
         const buttonCreate = document.createElement('button');
-        buttonCreate.textContent = 'create';
+        buttonCreate.textContent = 'Crear Coche';
         buttonCreate.setAttribute('data-bs-toggle', 'modal');
         buttonCreate.setAttribute('data-bs-target', '#createModal');
         buttonCreate.classList.add('btn', 'btn-success');
-        buttonCreate.dataset.url = "/product";
+        buttonCreate.dataset.url = "/cars";
         buttonCreate.dataset.method = "post";
         this.content.appendChild(buttonCreate);
     
-        result.products.links.forEach(element => {
-            this.pageItem.add(element, (data) => {
+        result.cars.links.forEach(link => {
+            this.pageItem.add(link, (data) => {
                 this.setContent(data);
             });
         });
     
-        result.products.data.forEach(element => {
-            this.responseRow.add(element);
+        result.cars.data.forEach(item => {
+            this.responseRow.add(item);
         });
     }
 
     setUserContent(user) {
         this.cleanContent(this.userContent);
-        if (user === null) {
+        if(user===null) {
             this.setNoUserContent();
         } else {
             this.setCurrentUserContent(user);
@@ -61,11 +61,16 @@ export default class ResponseContent {
     }
 
     setCurrentUserContent(user) {
-        if (!user || !user.name) {
-            console.error('Invalid user object:', user);
-            return;
-        }
-    
+        /*<li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                {{ Auth::user()->name }}
+            </a>
+            <div class="dropdown-menu dropdown-menu-end" >
+                <a class="dropdown-item" data-url="/logout">
+                    Logout
+                </a>
+            </div>
+        </li>*/
         let listItem = document.createElement('li');
         listItem.classList.add('nav-item', 'dropdown');
         let a = document.createElement('a');
@@ -75,7 +80,7 @@ export default class ResponseContent {
         a.appendChild(textNode);
         listItem.appendChild(a);
         this.userContent.appendChild(listItem);
-    
+
         let div = document.createElement('div');
         div.classList.add('dropdown-menu', 'dropdown-menu-end');
         a = document.createElement('a');
@@ -109,8 +114,6 @@ export default class ResponseContent {
         aElement = document.createElement('a');
         aElement.classList.add('nav-link');
         aElement.dataset.url = '/register';
-        //aElement.dataset['bs-toggle'] = 'modal';
-        //aElement.dataset['bs-target'] = "#registerModal";
         aElement.setAttribute('data-bs-toggle', 'modal');
         aElement.setAttribute('data-bs-target', '#registerModal');
         textNode = document.createTextNode('Register');
